@@ -98,8 +98,6 @@ app.put('/api/persons/:id', (req, res, next) =>{
     const id = req.params["id"]
     Record.findByIdAndUpdate(id, {name: body.name, number: body.number})
     .then(record => {
-        console.log(record);
-        
         if (record) {
             res.status(200).json(record)
         } else {
