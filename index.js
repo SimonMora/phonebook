@@ -65,8 +65,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 app.post("/api/persons", (req, res, next) => {
     const body = req.body;
 
-    if (body.name !== '' && body.number !== '') {
-        Record.findOne({ name: body.name })
+    Record.findOne({ name: body.name })
         .then(record => {
             if (record) {
                 res.status(400).json({ error: 'Contact already exists.' });
@@ -75,22 +74,11 @@ app.post("/api/persons", (req, res, next) => {
                     ...body
                 });
                 newRecord.save()
-                .then(recordSaved => res.json(recordSaved))
-                .catch(err => next(err));
+                    .then(recordSaved => res.json(recordSaved))
+                    .catch(err => next(err));
             }
         })
         .catch(err => next(err));
-    } else {
-        let error = '';
-        if (body.name === '') {
-            error += 'Name is required to create a new record. ';
-        }
-
-        if (body.number === '') {
-            error += 'Number is required to create a new record.';
-        }
-        return res.status(400).json({ error: error });
-    }
 });
 
 app.put('/api/persons/:id', (req, res, next) =>{
@@ -112,6 +100,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   } else {
     return response.status(500).send({ error: error.message})
   }

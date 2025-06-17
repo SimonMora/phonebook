@@ -9,10 +9,19 @@ mongoose.connect(URL)
 const recordSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 3,
-    required: true
+    minLength: [3, "Name must be at least 3 characters"],
+    required: [true, "Name is a required value"]
   },
-  number: String,
+  number: {
+    type: String,
+    minLength: [8, "Number must be at least 8 characters"],
+    validate: {
+        validator: v => {
+            return /\d{2,3}-\d/.test(v)
+        },
+        message: props => `${props.value} is not a valid phone number.`
+    }
+  },
 });
 
 recordSchema.set('toJSON', {
